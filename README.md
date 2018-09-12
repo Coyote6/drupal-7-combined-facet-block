@@ -9,6 +9,7 @@ Installation & Config
 6. Configure each facet to use the Select (CBF Field) and set a title for the field item.
 7. Go to your blocks page and configure your Combo Facet block.
 8. Add to the correct page using the standard Blocks UI or Context.
-9. Enjoy.
+9. Go to the configuration page /admin/config/search/cfb to sort the enabled facets.
+10. Enjoy.
 
 I recommend shutting off other facets that are not using the Select (CBF Field) widget if possible and all other facets in other realms, as I attempted to account for them, but they kind of defeat the purpose of this module if used.
