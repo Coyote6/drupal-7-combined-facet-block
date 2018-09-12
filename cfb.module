@@ -1,0 +1,88 @@
+<?php
+
+module_load_include ('inc', 'cfb');
+
+
+function cfb_module_implements_alter (&$implementations, $hook) {
+  // Make sure cfb loads after facetapi pretty paths when altering the search info alter. 
+  if ($hook == 'facetapi_searcher_info_alter') {
+    $mod = $implementations['cfb'];
+    unset($implementations['cfb']);
+    $implementations['cfb'] = $mod;
+  }
+}
+
+
+function cfb_permission () {
+	
+	// Set up permission to edit game room games.
+	$permissions = [
+		'administer cfb' => [
+			'title' => t ('Administer CFB Settings'), 
+			'description' => t ('Access to administer all parts of the CFB module.')
+		],
+	];
+
+	// Return the permissions array.
+	return $permissions;
+	
+}
+
+
+function cfb_menu () {
+  
+  $items = [
+    'admin/config/search/cfb' => [
+      'title' => 'CFB (Combined Facet Block)',
+      'description' => 'Configure CFB (Combined Facet Block)',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => ['cfb_config_form'],
+      'access arguments' => ['administer cfb'],  
+    ]
+  ];
+  
+  return $items;
+  
+}
+
+
+function cfb_theme($existing, $type, $theme, $path) {
+  return array(
+    'cfb_config_form' => [
+      'render element' => 'form',
+    ],
+  );
+}
+
+function theme_cfb_config_form ($variables) {
+  
+  $form = $variables['form'];
+  
+  $rows = [];
+  foreach (element_children ($form['order']) as $id) {
+    $form['order'][$id]['weight']['#attributes']['class'] = ['cfb-order-weight'];
+    $rows[] = [
+      'data' => [
+        [
+          'class' => ['slide-cross']
+        ],
+        [
+          'data' => drupal_render($form['order'][$id]['id']),
+          'style' => 'display:none;'
+        ],
+        drupal_render($form['order'][$id]['name']),
+        drupal_render($form['order'][$id]['weight']),
+      ],
+      'class' => ['draggable'],
+    ];
+  }
+  
+  $header = ['', ['data' => '', 'style' => 'display:none;'], t('Facet'), t('Weight')];
+  $output = theme ('table', ['header' => $header, 'rows' => $rows, 'attributes' => ['id' => 'facet-order']]);
+  $output .= drupal_render_children ($form);
+  
+  drupal_add_tabledrag ('facet-order', 'order', 'sibling', 'cfb-order-weight');
+  
+  return $output;
+  
+}

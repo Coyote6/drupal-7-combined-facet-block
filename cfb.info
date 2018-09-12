@@ -1,0 +1,8 @@
+name = Combined Facet Block
+description = Custom module to combine Facets into a single form.
+package = Search
+core = 7.x
+
+dependencies[] = search_api
+dependencies[] = facetapi
+dependencies[] = facetapi_pretty_paths
